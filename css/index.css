@@ -19,6 +19,7 @@ address, cite, dfn, em, i, var {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  color: #666;
   animation: calendar_open 0.3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
   -webkit-animation: calendar_open 0.3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
   animation-fill-mode: forwards;
@@ -60,7 +61,6 @@ address, cite, dfn, em, i, var {
   width: 100%;
   overflow: hidden;
   font-size: 11px;
-  color: #666;
   border-bottom: 1px solid #c8c8c8; }
 
 .jt_cldweek li:first-child, .jt_cldweek li:last-child {
@@ -106,14 +106,12 @@ address, cite, dfn, em, i, var {
 .jt_cld_day_havetxt em, .jt_cld_daycrt em, .jt_cld_haspro em, .jt_cld_nopro em {
   display: block;
   line-height: 20px;
-  font-size: 15px;
-  color: #666; }
+  font-size: 15px; }
 
 .jt_cld_day_havetxt i, .jt_cld_daycrt i, .jt_cld_haspro i, .jt_cld_nopro i {
   display: block;
   line-height: 15px;
-  font-size: 11px;
-  color: #666; }
+  font-size: 11px; }
 
 .jt_cld_daybox li:nth-of-type(7n), .jt_cld_daybox li:nth-of-type(7n+1) {
   width: 15%;
