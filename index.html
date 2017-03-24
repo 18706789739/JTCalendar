@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="css/normalize.css">
+	<link rel="stylesheet" type="text/css" href="css/layout.css">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+	<button type="text" id="timein">入住</button>
+	<button type="text" id="timeout">离店</button>
+	<input id="a"></input>
+
+</body>
+<script src="js/zepto.min.js"></script>
+<script src="js/timepicker.js"></script>
+<script>
+$(function(){
+
+$('#timein').JTCalendar({
+	title:'选择入住离店日期',
+	inTime:'2017-3-30',
+	minDay:2,
+	monthNumber:3,
+	onClick:function(cb){
+		console.log(cb)
+	}
+})
+
+})
+</script>
+</html>

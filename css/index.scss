@@ -1,0 +1,143 @@
+button{
+    width: 50px;
+    height: 25px;
+}
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+address, cite, dfn, em, i, var {
+    font-style: normal;
+    font-weight: 400;
+}
+.jt_cldunit{
+    font-family: "microsoft yahei",Arial;
+    position: absolute;
+    top:0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    overflow-y:auto;
+    animation:calendar_open .3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
+    -webkit-animation:calendar_open .3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
+    animation-fill-mode:forwards ;
+    -webkit-animation-fill-mode:forwards ;
+}
+.jt_calendar_close{
+    animation:calendar_close .3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
+    -webkit-animation:calendar_close .3s cubic-bezier(0.6, 0.01, 0.53, 0.98);
+}
+@keyframes calendar_open{
+    from {
+        transform:translate3d(0,0,0);
+        -webkit-transform:translate3d(0,0,0);
+    }
+    to {
+        transform:translate3d(-100%,0,0);
+        -webkit-transform:translate3d(-100%,0,0);
+    }
+}
+@keyframes calendar_close{
+    from {
+        transform:translate3d(-100%,0,0);
+        -webkit-transform:translate3d(-100%,0,0);
+    }
+    to {
+        transform:translate3d(0,0,0);
+        -webkit-transform:translate3d(0,0,0);
+    }
+}
+@-webkit-keyframes calendar_open{
+    from {
+        transform:translate3d(0,0,0);
+        -webkit-transform:translate3d(0,0,0);
+    }
+    to {
+        transform:translate3d(-100%,0,0);
+        -webkit-transform:translate3d(-100%,0,0);
+    }
+}
+@-webkit-keyframes calendar_close{
+    from {
+        transform:translate3d(-100%,0,0);
+        -webkit-transform:translate3d(-100%,0,0);
+    }
+    to {
+        transform:translate3d(0,0,0);
+        -webkit-transform:translate3d(0,0,0);
+    }
+}
+.jt_cldweek {
+    width: 100%;
+    overflow: hidden;
+    font-size: 11px;
+    color: #666;
+    border-bottom: 1px solid #c8c8c8;
+}
+.jt_cldweek li:first-child, .jt_cldweek li:last-child {
+    width: 15%;
+    color: #39c3d0;
+}
+.jt_cldweek li {
+    line-height: 30px;
+    float: left;
+    width: 14%;
+    text-align: center;
+}
+.jt_cldmonth {
+    height: 27px;
+    line-height: 27px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: normal;
+    color: #666;
+    background: #fff;
+    margin:0;
+    border-top: 1px solid #e0e0e0;
+}
+.jt_cld_daybox {
+    overflow: hidden;
+    background: #fff;
+    margin: 15px 0;
+}
+.jt_cld_daybox li {
+    float: left;
+    width: 14%;
+    height: 40px;
+    padding: 4px 0;
+    font: 400 14px/45px verdana;
+    overflow: hidden;
+    text-align: center;
+}
+.jt_cld_daybox li.jt_cld_daypass {
+    color: #aaa !important;
+    em,i{
+        color: #aaa !important;
+    }
+}
+.jt_cld_daybox .jt_cld_today{
+    
+}
+.jt_cld_day_havetxt em, .jt_cld_daycrt em, .jt_cld_haspro em, .jt_cld_nopro em {
+    display: block;
+    line-height: 20px;
+    font-size: 15px;
+    color: #666;
+}
+.jt_cld_day_havetxt i, .jt_cld_daycrt i, .jt_cld_haspro i, .jt_cld_nopro i {
+    display: block;
+    line-height: 15px;
+    font-size: 11px;
+    color: #666;
+}
+.jt_cld_daybox li:nth-of-type(7n), .jt_cld_daybox li:nth-of-type(7n+1) {
+    width: 15%;
+    color: #39c3d0;
+}
+.jt_cld_daybox .jt_choose-day{
+    background-color: #39c3d0;  
+    em,i.prejl{
+        color: #FFF;
+    }
+}
