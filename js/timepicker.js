@@ -39,7 +39,7 @@
 				var value 	= date;
 					num 	= num || 1; 
 
-				if(typeof value == 'object'){
+				if(value instanceof Date){
 
 					value = date.valueOf();
 
@@ -74,11 +74,7 @@
 			_dateObjToJson:function(dateObj){
 				var o = dateObj;
 
-				if(o instanceof Date){
-
-					o = $.extend({},o)
-
-				}else if(typeof o == 'number'){
+				if(typeof o == 'number'){
 
 					o = new Date(o)
 
@@ -175,7 +171,7 @@
 					
 					/*如果入住时间为时间戳或者Date对象*/
 					if(typeof ops.inTime == 'number' || ops.inTime instanceof Date){
-
+						
 						ops.inTime = this._dateObjToJson(ops.inTime).dateStr;
 
 					}
@@ -390,8 +386,6 @@
 			},
 
 			bindDate:function(){
-
-				console.log(ops)
 
 				ops.$elm.data('inTime',ops.inTime);
 
