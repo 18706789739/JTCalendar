@@ -67,7 +67,6 @@
 
 			/*获取开始到结束时间的天数*/
 			_getTimesDay:function(d1,d2){
-				console.log((d2-d1)/(24*60*60*1000))
 				return (d2-d1)/(24*60*60*1000);
 			},
 
@@ -143,8 +142,6 @@
 				/*如果传入了inTime*/
 				if(typeof ops.inTime != 'boolean'){
 
-					console.log(propDay ,'----',ops.outTimeVal)
-
 					/*是否是入住时间*/
 					if(propDay === ops.inTimeVal){
 
@@ -172,22 +169,19 @@
 			},
 			/*检查传入的数据*/
 			_checkOps:function(){
+
 				/*如果传入了ops.inTime*/
 				if( ops.inTime ) {
 					
-					/*如果入住时间是时间戳*/
-					if(typeof ops.inTime == 'number'){
+					/*如果入住时间为时间戳或者Date对象*/
+					if(typeof ops.inTime == 'number' || ops.inTime instanceof Date){
 
-						ops.inTimeVal 	= ops.inTime;
+						ops.inTime = this._dateObjToJson(ops.inTime).dateStr;
 
-						ops.outTimeVal 	= this._addDay(ops.inTimeVal,ops.minDay);
+					}
 
-						ops.inTime		= this._dateObjToJson(ops.inTime).dateStr;
-
-						ops.outTime 	= this._dateObjToJson(ops.outTimeVal).dateStr;
-					
 					/*如果入住时间是字符串('xxxx-xx-xx')*/
-					}else if(typeof ops.inTime == 'string'){
+					if (typeof ops.inTime == 'string'){
 
 						ops.inTimeVal 	= this._strToDateObj(ops.inTime).valueOf();
 
@@ -195,8 +189,9 @@
 
 						ops.outTime 	= this._dateObjToJson(ops.outTimeVal).dateStr;
 
+					}else{
+						console.warn('请检查inTime类型')
 					}
-
 				}
 
 			},
@@ -386,7 +381,9 @@
 
 				ops.outTime = ops.$elm.data('outTime');
 
-				this._checkOps();
+				ops.inTimeVal 	= this._strToDateObj(ops.inTime).valueOf();
+
+				ops.outTimeVal 	= this._strToDateObj(ops.outTime).valueOf();
 
 				this.renderCalendar();
 
