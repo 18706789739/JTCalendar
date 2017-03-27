@@ -392,19 +392,26 @@
 						}
 
 						var _inTime 	= this._dateObjToJson(cache.cacheInTimeVal).dateStr,
-							_outTime 	= this._dateObjToJson(nowTimeVal).dateStr;
+							_outTime 	= this._dateObjToJson(nowTimeVal).dateStr,
+							_totTime 	= this._getTimesDay(_inTime,_outTime);
 
 						ops.$elm.data('inTime',_inTime);
 
 						ops.$elm.data('outTime',_outTime);
 
-						ops.$elm.data('totTime',this._getTimesDay(_inTime,_outTime));
+						ops.$elm.data('totTime',_totTime);
 
 						cache.clickNum = 0;
 
 					}
+					
+					var callback = {
+						inTime 		: this._dateObjToJson(new Date(_inTime)),
+						outTime 	: this._dateObjToJson(new Date(_outTime)),
+						totTime 	: _totTime
+					}
 
-					ops.onClick(this._dateObjToJson(nowTimeVal));
+					ops.onClick(callback);
 
 					this.closeCalendar();
 
