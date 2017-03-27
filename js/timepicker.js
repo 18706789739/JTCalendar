@@ -67,7 +67,15 @@
 
 			/*获取开始到结束时间的天数*/
 			_getTimesDay:function(d1,d2){
-				return (d2-d1)/(24*60*60*1000);
+				var inTime 	= d1,
+					outTime = d2;
+				if(typeof inTime == 'string'){
+					inTime = new Date(inTime);
+				}
+				if(typeof outTime == 'string'){
+					outTime = new Date(outTime);
+				}
+				return (outTime-inTime )/(24*60*60*1000);
 			},
 
 			/*将Date类型转为字符串*/
@@ -126,12 +134,24 @@
 
 				}
 
-				/*是否是今天*/
+				/*是否是今明后天*/
 				if(toDay === propDay){
 
 					o.className += ' jt_cld_today';
 
 					o.date='今天';
+
+				}else if(this._getTimesDay(toDay,propDay) === 1){
+
+					o.className += ' jt_cld_today';
+
+					o.date='明天';
+
+				}else if(this._getTimesDay(toDay,propDay) === 2){
+
+					o.className += ' jt_cld_today';
+
+					o.date='后天';
 
 				}
 
@@ -143,7 +163,7 @@
 
 						o.className += ' jt_choose-day';
 
-						o.date='入住';
+						o.text='入住';
 
 					}
 					/*是否是入住时间*/
@@ -151,7 +171,7 @@
 
 						o.className += ' jt_choose-day';
 
-						o.date='退房';
+						o.text='退房';
 
 					}
 				}
@@ -184,6 +204,8 @@
 						ops.outTimeVal 	= this._addDay(ops.inTimeVal,ops.minDay);
 
 						ops.outTime 	= this._dateObjToJson(ops.outTimeVal).dateStr;
+
+						this._renderMessge();
 
 					}else{
 						console.warn('请检查inTime类型')
@@ -267,6 +289,37 @@
 				return header.prepend(left_icon);
 
 			},
+			_renderMessge:function(info){
+				var self = this;
+
+				/*如果页面不存在Messge DOM对象*/
+				if(typeof this._$messge != 'object'){
+
+					var	messge 		= $('<div class="calendar_messge">666</div>');
+
+					this._$messge = messge;
+
+					$('body').append(messge);
+
+				}
+				
+				if(typeof info != 'undefined'){
+
+					this._$messge.text(info).addClass('calendar_messge_show');
+
+					clearTimeout(this._messgeTimer);
+
+					this._messgeTimer = setTimeout(function(){
+
+						self._$messge.removeClass('calendar_messge_show');
+
+					},3000)
+
+				}
+
+				
+
+			},
 
 			renderCalendar:function(){
 
@@ -277,7 +330,7 @@
 					$cldunit 	= $('<section id="calendar" class="jt_cldunit"></section>');
 
 				$cldunit.append(this._renderHeader())
-				this._elm = $cldunit;
+				this._$elm = $cldunit;
 
 				do{
 					$cldunit.append(this._renderDate(d));
@@ -288,6 +341,8 @@
 				}while(--monthNumber != 0);
 
 				$('body').append($cldunit);
+
+				this._renderMessge('选择入店日期');
 
 			},
 
@@ -300,16 +355,9 @@
 						nowTimeVal 	= new Date($doc.data('date')).valueOf();
 
 					/*第一次点击*/
-					/*准备修改：点击后改变元素text*/
 					if(ops.inTime && cache.clickNum === 0){
-						
-						this._elm.find('.jt_choose-day').removeClass('jt_choose-day');
-
-						$doc.addClass('jt_choose-day');
 
 						cache.cacheInTimeVal = nowTimeVal;
-
-						console.log('选择退房日期')
 
 						cache.clickNum++;
 					}
@@ -322,13 +370,13 @@
 
 							cache.cacheInTimeVal = nowTimeVal;
 
-							this._elm.find('.jt_choose-day').removeClass('jt_choose-day');
+							this._$elm.find('.jt_choose-day').removeClass('jt_choose-day').find('.prejl').text('');
 
-							$doc.addClass('jt_choose-day');
+							$doc.addClass('jt_choose-day').find('.prejl').text('入住');
 
 							cache.clickNum = 1;
 
-							console.log('选择退房日期');
+							this._renderMessge('选择退房日期')
 
 							return;
 
@@ -336,16 +384,21 @@
 
 						if(this._getTimesDay(cache.cacheInTimeVal,nowTimeVal) < ops.minDay){
 
-							console.log('此酒店至少住'+ops.minDay+'天');
+							this._renderMessge('此酒店至少住'+ops.minDay+'天')
 
 							cache.clickNum = 1;
 
 							return;
 						}
 
-						ops.$elm.data('inTime',this._dateObjToJson(cache.cacheInTimeVal).dateStr);
+						var _inTime 	= this._dateObjToJson(cache.cacheInTimeVal).dateStr,
+							_outTime 	= this._dateObjToJson(nowTimeVal).dateStr;
 
-						ops.$elm.data('outTime',this._dateObjToJson(nowTimeVal).dateStr);
+						ops.$elm.data('inTime',_inTime);
+
+						ops.$elm.data('outTime',_outTime);
+
+						ops.$elm.data('totTime',this._getTimesDay(_inTime,_outTime));
 
 						cache.clickNum = 0;
 
@@ -361,8 +414,10 @@
 			/*关闭日历*/
 			closeCalendar:function(){
 
-				var Calendar = this._elm;
+				var Calendar = this._$elm;
 					Calendar.addClass('jt_calendar_close');
+
+				this._$messge.removeClass('calendar_messge_show');
 
 				setTimeout(function(){
 					Calendar.remove();
@@ -390,6 +445,8 @@
 				ops.$elm.data('inTime',ops.inTime);
 
 				ops.$elm.data('outTime',ops.outTime);
+
+				ops.$elm.data('totTime',this._getTimesDay(ops.inTime,ops.outTime))
 
 			},
 

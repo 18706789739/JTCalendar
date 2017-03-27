@@ -139,3 +139,22 @@ address, cite, dfn, em, i, var {
         color: #FFF;
     }
 }
+
+.calendar_messge{
+    visibility: hidden;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform:translateX(-50%) translateY(-50%);
+    -webkit-transform:translateX(-50%) translateY(-50%);
+    background: rgba(0,0,0,.8);
+    padding: 10px;
+    max-width: 90%;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.calendar_messge_show{
+    visibility: visible;
+    z-index: 99;
+}
