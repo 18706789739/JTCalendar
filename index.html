@@ -6,22 +6,54 @@
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="css/normalize.css">
 	<link rel="stylesheet" type="text/css" href="css/layout.css">
-	<link rel="stylesheet" type="text/css" href="css/index.css">
+	<link rel="stylesheet" type="text/css" href="css/JTCalendar.css">
 </head>
 <body>
-	<button type="text" id="timein">入住</button>
-	<button type="text" id="timeout">离店</button>
-	<input id="a"></input>
+
+	<div id="calendar" class="choose_time_box">
+		<p class="choose_time">
+			<span data-intime class="choose_time_span">
+				<span class="choose_date">03月29日</span>
+				<i class="f">今天</i><i>入住</i>
+			</span>
+			<br>
+			<span data-outtime class="choose_time_span">
+				<span class="choose_date">04月12日</span>
+				<i class="f">周三</i><i>离店</i>
+			</span>
+		</p>
+		<strong>共<i class="tottime">14</i>晚</strong>
+	</div>
+
+	<input id="timeout" placeholder="单选框"></input>
 
 </body>
 <script src="js/zepto.min.js"></script>
-<script src="js/timepicker.js"></script>
+<script src="js/JTCalendar.js"></script>
 <script>
 $(function(){
 
-$('#timein').JTCalendar({
+$('#calendar').JTCalendar({
 	title:'选择入住离店日期',
 	inTime:new Date(),
+	minDay:2,
+	monthNumber:3,
+	onClick:function($elm,cb){
+		console.log($elm,cb)
+
+		$elm.find('[data-intime] .choose_date').text(cb.inTime.month+'月'+cb.inTime.date+'日')
+		.next('i.f').text(cb.inTime.dayText);
+
+		$elm.find('[data-outtime] .choose_date').text(cb.outTime.month+'月'+cb.outTime.date+'日')
+		.next('i.f').text(cb.outTime.dayText);
+
+		$elm.find('i.tottime').text(cb.totTime);
+
+	}
+})
+
+$('#timeout').JTCalendar({
+	title:'选择日期',
 	minDay:2,
 	monthNumber:3,
 	onClick:function(cb){

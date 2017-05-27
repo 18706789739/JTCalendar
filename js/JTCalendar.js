@@ -78,8 +78,67 @@
 				return (outTime-inTime )/(24*60*60*1000);
 			},
 
+			_getDayText:function(o){
+
+				if(o instanceof Date){
+
+					var oVal 		= o.valueOf(),
+						toDayVal 	= this._todayVal;
+
+					if(oVal == toDayVal){
+
+						return '今天';
+
+					}else if(this._getTimesDay( toDayVal,oVal ) == 1 ){
+
+						return '明天';
+
+					}else if(this._getTimesDay( toDayVal,oVal ) == 2 ){
+
+						return '后天';
+
+					}else{
+						return this._getDayTextSwitch(o.getDay()) ;
+					}
+
+				}
+
+				
+			},
+
+			_getDayTextSwitch:function(num){
+				switch (num){
+
+					case 0:
+					return '周天';
+
+					case 1:
+					return '周一';
+
+					case 2:
+					return '周二';
+
+					case 3:
+					return '周三';
+
+					case 4:
+					return '周四';
+
+					case 5:
+					return '周五';
+
+					case 6:
+					return '周六';
+
+					default:
+					return false;
+
+				}
+			},
+
 			/*将Date类型转为字符串*/
-			_dateObjToJson:function(dateObj){
+			_dateObjToJson:function(dateObj,domStatu){
+				var domStatu = domStatu || false;
 				var o = dateObj;
 
 				if(typeof o == 'number'){
@@ -92,15 +151,24 @@
 
 				}
 
+				var date 	= domStatu ? this._zfill(o.getDate(),2) :o.getDate(),
+					month 	= domStatu ? this._zfill(o.getMonth()+1,2) :o.getMonth();
+
 				return {
 					valueOf:o.valueOf(),
-					date:o.getDate(), 		//天(1 ~ 31)
+					date:date, 		//天(1 ~ 31)
 					day:o.getDay(),			//周几(0 ~ 6)
-					month:o.getMonth(), 		//月份 (0 ~ 11)
+					dayText:this._getDayText(o),
+					month:month, 		//月份 (0 ~ 11)
 					year:o.getFullYear(),
 					dateStr:o.getFullYear()+'-'+(o.getMonth()+1)+'-'+o.getDate()
 				}
 
+			},
+
+			_zfill:function(num, size) {
+			    var s = "000000000" + num;
+			    return s.substr(s.length-size);
 			},
 
 			/*将字符串转为Date类型*/
@@ -323,11 +391,11 @@
 
 			renderCalendar:function(){
 
-				if($('#calendar').length != 0)return;
+				if($('#_Calendar').length != 0)return;
 
 				var d 			= this._dateObjToJson(),
 					monthNumber = ops.monthNumber,
-					$cldunit 	= $('<section id="calendar" class="jt_cldunit"></section>');
+					$cldunit 	= $('<section id="_Calendar" class="jt_cldunit"></section>');
 
 				$cldunit.append(this._renderHeader())
 				this._$elm = $cldunit;
@@ -341,77 +409,88 @@
 				}while(--monthNumber != 0);
 
 				$('body').append($cldunit);
-
-				this._renderMessge('选择入店日期');
+				if(ops.inTime){this._renderMessge('选择入店日期');}
 
 			},
 
 			/*当日历被点击*/
 			onHandleClick:function($doc){
-
+				
 				if( (!$doc.hasClass('js_invalid') ) ){
 
-					var cache 		= this._cache;
+					var cache 		= this._cache,
+						callback 	= {},
 						nowTimeVal 	= new Date($doc.data('date')).valueOf();
 
 					/*第一次点击*/
-					if(ops.inTime && cache.clickNum === 0){
+					if(ops.inTime){
 
-						cache.cacheInTimeVal = nowTimeVal;
-
-						cache.clickNum++;
-					}
-
-					/*第二次点击*/
-					if(ops.inTime && cache.clickNum === 1){
-
-						/*如果当前选择的日期小于入住日期*/
-						if(nowTimeVal <= cache.cacheInTimeVal){
+						if(cache.clickNum === 0){
 
 							cache.cacheInTimeVal = nowTimeVal;
 
-							this._$elm.find('.jt_choose-day').removeClass('jt_choose-day').find('.prejl').text('');
-
-							$doc.addClass('jt_choose-day').find('.prejl').text('入住');
-
-							cache.clickNum = 1;
-
-							this._renderMessge('选择退房日期')
-
-							return;
-
+							cache.clickNum++;
 						}
 
-						if(this._getTimesDay(cache.cacheInTimeVal,nowTimeVal) < ops.minDay){
+						/*第二次点击*/
+						if(cache.clickNum === 1){
 
-							this._renderMessge('此酒店至少住'+ops.minDay+'天')
+							/*如果当前选择的日期小于入住日期*/
+							if(nowTimeVal <= cache.cacheInTimeVal){
 
-							cache.clickNum = 1;
+								cache.cacheInTimeVal = nowTimeVal;
 
-							return;
+								this._$elm.find('.jt_choose-day').removeClass('jt_choose-day').find('.prejl').text('');
+
+								$doc.addClass('jt_choose-day').find('.prejl').text('入住');
+
+								cache.clickNum = 1;
+
+								this._renderMessge('选择退房日期')
+
+								return;
+
+							}
+
+							if(this._getTimesDay(cache.cacheInTimeVal,nowTimeVal) < ops.minDay){
+
+								this._renderMessge('此酒店至少住'+ops.minDay+'天')
+
+								cache.clickNum = 1;
+
+								return;
+							}
+
+							var _inTime 	= this._dateObjToJson(cache.cacheInTimeVal).dateStr,
+								_outTime 	= this._dateObjToJson(nowTimeVal).dateStr,
+								_totTime 	= this._getTimesDay(_inTime,_outTime);
+
+							ops.$elm.data('inTime',_inTime);
+
+							ops.$elm.data('outTime',_outTime);
+
+							ops.$elm.data('totTime',_totTime);
+
+							cache.clickNum = 0;
+
+						}
+						
+						callback = {
+							inTime 		: this._dateObjToJson(new Date(_inTime),true),
+							outTime 	: this._dateObjToJson(new Date(_outTime),true),
+							totTime 	: _totTime
 						}
 
-						var _inTime 	= this._dateObjToJson(cache.cacheInTimeVal).dateStr,
-							_outTime 	= this._dateObjToJson(nowTimeVal).dateStr,
-							_totTime 	= this._getTimesDay(_inTime,_outTime);
+						this._$messge.removeClass('calendar_messge_show');
 
-						ops.$elm.data('inTime',_inTime);
-
-						ops.$elm.data('outTime',_outTime);
-
-						ops.$elm.data('totTime',_totTime);
-
-						cache.clickNum = 0;
-
+					}else{
+						var date = $doc.data('date');
+						ops.$elm.val(date)
+						callback = this._dateObjToJson(new Date(date))
 					}
 					
-					var callback = {
-						inTime 		: this._dateObjToJson(new Date(_inTime)),
-						outTime 	: this._dateObjToJson(new Date(_outTime)),
-						totTime 	: _totTime
-					}
 
-					ops.onClick(callback);
+					ops.onClick(ops.$elm,callback);
 
 					this.closeCalendar();
 
@@ -423,8 +502,6 @@
 
 				var Calendar = this._$elm;
 					Calendar.addClass('jt_calendar_close');
-
-				this._$messge.removeClass('calendar_messge_show');
 
 				setTimeout(function(){
 					Calendar.remove();
@@ -449,11 +526,15 @@
 
 			bindDate:function(){
 
-				ops.$elm.data('inTime',ops.inTime);
+				if(ops.inTime){
 
-				ops.$elm.data('outTime',ops.outTime);
+					ops.$elm.data('inTime',ops.inTime);
 
-				ops.$elm.data('totTime',this._getTimesDay(ops.inTime,ops.outTime))
+					ops.$elm.data('outTime',ops.outTime);
+
+					ops.$elm.data('totTime',this._getTimesDay(ops.inTime,ops.outTime));
+
+				}
 
 			},
 
